@@ -1,0 +1,2 @@
+common --verbose_failures
+common --@libusb_srcs//:libusb_config=//:default_libusb_config

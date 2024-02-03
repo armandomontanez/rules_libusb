@@ -1,0 +1,5 @@
+# Build
+bazel-*
+
+# Editors
+.vscode
