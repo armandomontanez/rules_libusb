@@ -1,11 +1,11 @@
 # Copyright 2024 Armando Montanez
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -88,6 +88,47 @@ cc_library(
     visibility = ["//visibility:private"],
 )
 
+_GENERATED_UDEV_OR_NETLINK = """
+#include "config.h"
+
+#if HAVE_LIBUDEV
+#include "libusb/os/linux_udev.c"
+#else
+#include "libusb/os/linux_netlink.c"
+#endif  // HAVE_LIBUDEV
+"""
+
+genrule(
+    name = "autodetect_udev",
+    outs = ["udev_or_netlink.c"],
+    cmd = "echo '{}' > $@".format(_GENERATED_UDEV_OR_NETLINK),
+)
+
+cc_library(
+    name = "libusb_linux",
+    hdrs = [
+        "libusb/os/events_posix.h",
+        "libusb/os/threads_posix.h",
+        "libusb/os/linux_usbfs.h",
+
+        # These are listed as `hdrs` because they're selected by
+        # an `#include` in the generated `udev_or_netlink.c`.
+        "libusb/os/linux_netlink.c",
+        "libusb/os/linux_udev.c",
+    ],
+    srcs = [
+        "libusb/os/events_posix.c",
+        "libusb/os/threads_posix.c",
+        "libusb/os/linux_usbfs.c",
+        "udev_or_netlink.c",
+    ],
+    deps = [
+        ":libusb_config",
+        ":libusb_headers",
+    ],
+    visibility = ["//visibility:private"],
+)
+
 cc_library(
     name = "libusb_core",
     srcs = [
@@ -100,7 +141,7 @@ cc_library(
     ],
     deps = select({
         "@platforms//os:linux": [":libusb_linux"],
-        "@platforms//os:macos": [":libusb_macos"],
+        "@platforms//os:macos": ["@platforms//:incompatible"],
         "@platforms//os:windows": [":libusb_windows"],
         "//conditions:default": ["@platforms//:incompatible"],
     }) + [
