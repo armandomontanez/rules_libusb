@@ -23,6 +23,7 @@ cc_library(
     includes = ["include"],
     deps = select({
         "@platforms//os:windows": ["@libusb_srcs//:libusb_msvc_config"],
+        "@platforms//os:macos": ["@libusb_srcs//:libusb_macos_config"],
         "@platforms//os:linux": ["//:libusb_linux_config"],
         "//conditions:default": [],
     }),

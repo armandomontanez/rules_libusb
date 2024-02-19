@@ -20,18 +20,22 @@
 
 // TODO: MinGW-W64 and clang suppport.
 
-#define _RULES_LIBUSB_OS_SUPPORTED
+#define _RULES_LIBUSB_OS_SUPPORTED 1
 
 #elif defined(__linux__)
 
 #include "linux/config.h"
 
-#define _RULES_LIBUSB_OS_SUPPORTED
+#define _RULES_LIBUSB_OS_SUPPORTED 1
+
+#elif defined(__APPLE__)
+
+#include "Xcode/config.h"
+
+#define _RULES_LIBUSB_OS_SUPPORTED 1
 
 #endif  // defined(_WIN32) | defined(_WIN64)
 
-// TODO: macOS support.
-
-#if !defined(_RULES_LIBUSB_OS_SUPPORTED)
+#if !defined(_RULES_LIBUSB_OS_SUPPORTED) || !_RULES_LIBUSB_OS_SUPPORTED
 #error Unsupported configuration, either contribute to rules_libusb, or build your own `config.h`.
 #endif  // !defined(_RULES_LIBUSB_OS_SUPPORTED)

@@ -53,6 +53,14 @@ cc_library(
     visibility = ["//visibility:public"],
 )
 
+# To use this `config.h`, include it as `Xcode/config.h` from your actual
+# `config.h`.
+cc_library(
+    name = "libusb_macos_config",
+    hdrs = ["Xcode/config.h"],
+    visibility = ["//visibility:public"],
+)
+
 cc_library(
     name = "libusb_headers",
     includes = ["libusb"],
@@ -88,6 +96,23 @@ cc_library(
     visibility = ["//visibility:private"],
 )
 
+cc_library(
+    name = "libusb_posix",
+    hdrs = [
+        "libusb/os/events_posix.h",
+        "libusb/os/threads_posix.h",
+    ],
+    srcs = [
+        "libusb/os/events_posix.c",
+        "libusb/os/threads_posix.c",
+    ],
+    deps = [
+        ":libusb_config",
+        ":libusb_headers",
+    ],
+    visibility = ["//visibility:private"],
+)
+
 _GENERATED_UDEV_OR_NETLINK = """
 #include "config.h"
 
@@ -107,8 +132,6 @@ genrule(
 cc_library(
     name = "libusb_linux",
     hdrs = [
-        "libusb/os/events_posix.h",
-        "libusb/os/threads_posix.h",
         "libusb/os/linux_usbfs.h",
 
         # These are listed as `hdrs` because they're selected by
@@ -117,14 +140,33 @@ cc_library(
         "libusb/os/linux_udev.c",
     ],
     srcs = [
-        "libusb/os/events_posix.c",
-        "libusb/os/threads_posix.c",
         "libusb/os/linux_usbfs.c",
         "udev_or_netlink.c",
     ],
     deps = [
         ":libusb_config",
         ":libusb_headers",
+        ":libusb_posix",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+cc_library(
+    name = "libusb_macos",
+    hdrs = [
+        "libusb/os/darwin_usb.h",
+    ],
+    srcs = [
+        "libusb/os/darwin_usb.c",
+    ],
+    deps = [
+        ":libusb_config",
+        ":libusb_headers",
+        ":libusb_posix",
+    ],
+    linkopts = [
+        "-framework IOKit",
+        "-framework Security",
     ],
     visibility = ["//visibility:private"],
 )
@@ -141,7 +183,7 @@ cc_library(
     ],
     deps = select({
         "@platforms//os:linux": [":libusb_linux"],
-        "@platforms//os:macos": ["@platforms//:incompatible"],
+        "@platforms//os:macos": [":libusb_macos"],
         "@platforms//os:windows": [":libusb_windows"],
         "//conditions:default": ["@platforms//:incompatible"],
     }) + [
