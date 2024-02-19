@@ -29,20 +29,7 @@ cc_shared_library(
 
 label_flag(
     name = "libusb_config",
-    build_setting_default = ":libusb_config_not_set",
-)
-
-# If you get the following error:
-#
-#   Target //:libusb is incompatible and cannot be built, but was explicitly requested.
-#
-# It's because you didn't set libusb_config. Add this to your .bazelrc:
-#
-#   --@libusb_srcs//:libusb_config=//:default_libusb_config
-cc_library(
-    name = "libusb_config_not_set",
-    target_compatible_with = ["@platforms//:incompatible"],
-    visibility = ["//visibility:private"],
+    build_setting_default = "@libusb//:default_libusb_config",
 )
 
 # To use this `config.h`, include it as `msvc/config.h` from your actual
