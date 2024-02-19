@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "b4996b02332c4297864b38df8525d3885fb0e41504afb00e2b9510c8bcc233bc",
+  "moduleFileHash": "37fdaba49d68604becff4585fe4242ac577123917c954db1d2252243d8e77379",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -25,38 +25,19 @@
       "toolchainsToRegister": [],
       "extensionUsages": [
         {
-          "extensionBzlFile": "//:MODULE.bazel",
-          "extensionName": "_repo_rules",
+          "extensionBzlFile": "@libusb//:extensions.bzl",
+          "extensionName": "libusb_srcs",
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 0,
-            "column": 0
+            "line": 5,
+            "column": 28
           },
           "imports": {
             "libusb_srcs": "libusb_srcs"
           },
           "devImports": [],
-          "tags": [
-            {
-              "tagName": "@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-              "attributeValues": {
-                "urls": [
-                  "https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2"
-                ],
-                "build_file": "libusb.BUILD",
-                "strip_prefix": "libusb-1.0.27",
-                "sha256": "ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575",
-                "name": "libusb_srcs"
-              },
-              "devDependency": false,
-              "location": {
-                "file": "@@//:MODULE.bazel",
-                "line": 4,
-                "column": 13
-              }
-            }
-          ],
+          "tags": [],
           "hasDevUseExtension": false,
           "hasNonDevUseExtension": true
         }
