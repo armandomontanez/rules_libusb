@@ -57,7 +57,7 @@ cc_library(
         "libusb/version.h",
         "libusb/version_nano.h",
     ],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(

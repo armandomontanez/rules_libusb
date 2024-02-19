@@ -32,6 +32,11 @@ cc_library(
 )
 
 alias(
+    name = "libusb_headers",
+    actual = "@libusb_srcs//:libusb_headers",
+)
+
+alias(
     name = "libusb",
     actual = "@libusb_srcs//:libusb",
 )
