@@ -1,5 +1,6 @@
 module(name = "libusb", version = "0.0.1")
 bazel_dep(name = "platforms", version = "0.0.8")
+
 http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 http_archive(
     name = "libusb_srcs",
@@ -7,4 +8,5 @@ http_archive(
     build_file = "libusb.BUILD",
     strip_prefix = "libusb-1.0.27",
     sha256 = "ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575",
+    workspace_file_content = "workspace(name = \"libusb_srcs\")\n",
 )

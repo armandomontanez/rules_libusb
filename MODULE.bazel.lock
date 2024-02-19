@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 3,
-  "moduleFileHash": "b4996b02332c4297864b38df8525d3885fb0e41504afb00e2b9510c8bcc233bc",
+  "moduleFileHash": "85813c6659159bf723e971e86524c5770cbf5da0c20f439914eb890ee6906d89",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -47,12 +47,13 @@
                 "build_file": "libusb.BUILD",
                 "strip_prefix": "libusb-1.0.27",
                 "sha256": "ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575",
+                "workspace_file_content": "workspace(name = \"libusb_srcs\")\n",
                 "name": "libusb_srcs"
               },
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 4,
+                "line": 5,
                 "column": 13
               }
             }
