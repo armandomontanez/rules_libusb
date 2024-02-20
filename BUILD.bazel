@@ -24,8 +24,8 @@ cc_library(
     hdrs = ["include/config.h"],
     includes = ["include"],
     deps = select({
-        "@platforms//os:windows": ["@libusb_srcs//:libusb_msvc_config"],
-        "@platforms//os:macos": ["@libusb_srcs//:libusb_macos_config"],
+        "@platforms//os:windows": ["@libusb_sources//:libusb_msvc_config"],
+        "@platforms//os:macos": ["@libusb_sources//:libusb_macos_config"],
         "@platforms//os:linux": ["//:libusb_linux_config"],
         "//conditions:default": [],
     }),
@@ -33,15 +33,15 @@ cc_library(
 
 alias(
     name = "libusb_headers",
-    actual = "@libusb_srcs//:libusb_headers",
+    actual = "@libusb_sources//:libusb_headers",
 )
 
 alias(
     name = "libusb",
-    actual = "@libusb_srcs//:libusb",
+    actual = "@libusb_sources//:libusb",
 )
 
 alias(
     name = "libusb-1.0",
-    actual = "@libusb_srcs//:libusb-1.0",
+    actual = "@libusb_sources//:libusb-1.0",
 )
