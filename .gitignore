@@ -3,3 +3,6 @@ bazel-*
 
 # Editors
 .vscode
+
+# Ignore until https://github.com/bazelbuild/bazel/issues/20369 is fixed.
+MODULE.bazel.lock

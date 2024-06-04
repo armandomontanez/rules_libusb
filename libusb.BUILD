@@ -20,11 +20,18 @@ alias(
 
 cc_shared_library(
     name = "libusb-1.0",
-    deps = [":libusb_core"],
+    # Always use exactly this name.
+    shared_lib_name = select({
+        "@platforms//os:macos": "libusb-1.0.dylib",
+        "@platforms//os:windows": "libusb-1.0.dll",
+        "//conditions:default": "libusb-1.0.so",
+    }),
     win_def_file = select({
         "@platforms//os:windows": "libusb/libusb-1.0.def",
         "//conditions:default": None,
     }),
+    deps = [":libusb_core"],
+    visibility = ["//visibility:public"],
 )
 
 label_flag(
@@ -50,54 +57,31 @@ cc_library(
 
 cc_library(
     name = "libusb_headers",
+    hdrs = glob(["libusb/*.h"]),
     includes = ["libusb"],
-    hdrs = [
-        "libusb/libusb.h",
-        "libusb/libusbi.h",
-        "libusb/version.h",
-        "libusb/version_nano.h",
-    ],
     visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "libusb_windows",
-    hdrs = [
-        "libusb/os/events_windows.h",
-        "libusb/os/threads_windows.h",
-        "libusb/os/windows_common.h",
-        "libusb/os/windows_usbdk.h",
-        "libusb/os/windows_winusb.h",
-    ],
-    srcs = [
-        "libusb/os/events_windows.c",
-        "libusb/os/threads_windows.c",
-        "libusb/os/windows_common.c",
-        "libusb/os/windows_usbdk.c",
-        "libusb/os/windows_winusb.c",
-    ],
+    srcs = glob(["libusb/os/*_windows.c"]),
+    hdrs = glob(["libusb/os/*_windows.h"]),
+    visibility = ["//visibility:private"],
     deps = [
         ":libusb_config",
         ":libusb_headers",
     ],
-    visibility = ["//visibility:private"],
 )
 
 cc_library(
     name = "libusb_posix",
-    hdrs = [
-        "libusb/os/events_posix.h",
-        "libusb/os/threads_posix.h",
-    ],
-    srcs = [
-        "libusb/os/events_posix.c",
-        "libusb/os/threads_posix.c",
-    ],
+    srcs = glob(["libusb/os/*_posix.c"]),
+    hdrs = glob(["libusb/os/*_posix.h"]),
+    visibility = ["//visibility:private"],
     deps = [
         ":libusb_config",
         ":libusb_headers",
     ],
-    visibility = ["//visibility:private"],
 )
 
 _GENERATED_UDEV_OR_NETLINK = """
@@ -118,56 +102,49 @@ genrule(
 
 cc_library(
     name = "libusb_linux",
-    hdrs = [
-        "libusb/os/linux_usbfs.h",
-
+    srcs = glob(
+        ["libusb/os/linux_*.c"],
+        exclude = [
+            "libusb/os/linux_netlink.c",
+            "libusb/os/linux_udev.c",
+        ],
+    ) + [
+        "udev_or_netlink.c",
+    ],
+    hdrs = glob(["libusb/os/linux_*.h"]) + [
         # These are listed as `hdrs` because they're selected by
         # an `#include` in the generated `udev_or_netlink.c`.
         "libusb/os/linux_netlink.c",
         "libusb/os/linux_udev.c",
     ],
-    srcs = [
-        "libusb/os/linux_usbfs.c",
-        "udev_or_netlink.c",
-    ],
+    visibility = ["//visibility:private"],
     deps = [
         ":libusb_config",
         ":libusb_headers",
         ":libusb_posix",
     ],
-    visibility = ["//visibility:private"],
 )
 
 cc_library(
     name = "libusb_macos",
-    hdrs = [
-        "libusb/os/darwin_usb.h",
-    ],
-    srcs = [
-        "libusb/os/darwin_usb.c",
-    ],
-    deps = [
-        ":libusb_config",
-        ":libusb_headers",
-        ":libusb_posix",
-    ],
+    srcs = glob(["libusb/os/darwin_*.c"]),
+    hdrs = glob(["libusb/os/darwin_*.h"]),
     linkopts = [
         "-framework IOKit",
         "-framework Security",
     ],
     visibility = ["//visibility:private"],
+    deps = [
+        ":libusb_config",
+        ":libusb_headers",
+        ":libusb_posix",
+    ],
 )
 
 cc_library(
     name = "libusb_core",
-    srcs = [
-        "libusb/core.c",
-        "libusb/descriptor.c",
-        "libusb/hotplug.c",
-        "libusb/io.c",
-        "libusb/strerror.c",
-        "libusb/sync.c",
-    ],
+    srcs = glob(["libusb/*.c"]),
+    visibility = ["//visibility:private"],
     deps = select({
         "@platforms//os:linux": [":libusb_linux"],
         "@platforms//os:macos": [":libusb_macos"],
@@ -177,5 +154,4 @@ cc_library(
         ":libusb_config",
         ":libusb_headers",
     ],
-    visibility = ["//visibility:private"],
 )
